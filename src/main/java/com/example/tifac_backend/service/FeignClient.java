@@ -9,4 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface FeignClient {
     @GetMapping("/search")
     ResponseEntity<?> getSearchResults(@RequestParam String key, @RequestParam String type, @RequestParam String channelId, @RequestParam String part, @RequestParam int maxResults, @RequestParam(defaultValue = "relevance", required = false) String order, @RequestParam String q, @RequestParam(required = false) String pageToken);
+
+    @GetMapping("/playlistItems")
+    ResponseEntity<?> getPlaylistItems(@RequestParam String key, @RequestParam String part, @RequestParam String playlistId, @RequestParam int maxResults, @RequestParam(required = false) String pageToken);
 }

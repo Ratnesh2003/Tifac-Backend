@@ -21,7 +21,12 @@ public class HomeController {
 
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam String type, @RequestParam String part, @RequestParam int maxResults, @RequestParam(defaultValue = "relevance", required = false) String order, @RequestParam String q, @RequestParam(required = false) String pageToken) {
-        return feignClient.getSearchResults(key, type, channelId, "snippet", maxResults, order, q, pageToken);
+        return feignClient.getSearchResults(key, type, channelId, part, maxResults, order, q, pageToken);
+    }
+
+    @GetMapping("/playlist")
+    public ResponseEntity<?> playlist(@RequestParam String playlistId, @RequestParam String part, @RequestParam int maxResults, @RequestParam(required = false) String pageToken) {
+        return feignClient.getPlaylistItems(key, part, playlistId, maxResults, pageToken);
     }
 
     @GetMapping("/")
