@@ -18,6 +18,4 @@ public class PlayListSnippet {
     private String title;
     private String description;
     private ThumbnailsDto thumbnails = new ThumbnailsDto();
-
-
 }
