@@ -48,19 +48,6 @@
             <artifactId>guava</artifactId>
             <version>31.1-jre</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-youtube</artifactId>
-            <version>v3-rev222-1.25.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-oauth2</artifactId>
-            <version>v2-rev157-1.25.0</version>
-        </dependency>
-
-
-
 
     </dependencies>
 
