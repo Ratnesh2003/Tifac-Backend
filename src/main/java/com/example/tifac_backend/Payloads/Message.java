@@ -1,0 +1,12 @@
+package com.example.tifac_backend.Payloads;
+
+import jakarta.persistence.Entity;
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Message {
+    private String message;
+}
