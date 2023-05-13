@@ -1,4 +1,5 @@
 package com.example.tifac_backend.service;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,4 +16,7 @@ public interface FeignClient {
 
     @GetMapping("/playlists")
     ResponseEntity<?> getAllPlaylist(@RequestParam String key, @RequestParam String part, @RequestParam String channelId, @RequestParam int maxResults, @RequestParam(required = false) String pageToken);
+
+    @GetMapping("/channels/")
+    ResponseEntity<?> getChannelDetails(@RequestParam String key, @RequestParam String part, @RequestParam String id);
 }
