@@ -1,5 +1,4 @@
 package com.example.tifac_backend.service.Impl;
-
 import com.example.tifac_backend.Models.*;
 import com.example.tifac_backend.Payloads.Message;
 import com.example.tifac_backend.Payloads.PageResult.PageResponse;
@@ -13,10 +12,7 @@ import com.example.tifac_backend.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -64,6 +60,11 @@ public class VideoServiceImpl implements VideoService {
         }
         return new ResponseEntity<>(new Message("The Youtube Response Has Been Fetched and Saved"), HttpStatus.OK);
     }
+//    @Override
+//    public ResponseEntity<?> webScrapPlayListContent(){
+//        List<PlayList> playlists = this.pLayListRepo.findAll();
+//        List<Video> videoContent = this.
+//    }
 
     @Override
     public ResponseEntity<?> webScrapPlayList() {
@@ -84,7 +85,7 @@ public class VideoServiceImpl implements VideoService {
                 this.pLayListRepo.save(playListModel);
             });
 
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
         return new ResponseEntity<>(new Message("The Youtube Response Has Been Fetched and Saved"), HttpStatus.OK);
@@ -120,5 +121,32 @@ public class VideoServiceImpl implements VideoService {
         Page<Video> pageVideos = this.videoRepository.findAll(p);
         List<Video> getVideos = pageVideos.getContent();
         return new PageResponse(new ArrayList<>(getVideos), pageVideos.getNumber(), pageVideos.getSize(), pageVideos.getTotalPages(), pageVideos.getTotalElements(), pageVideos.isLast());
+    }
+
+    @Override
+    public PageResponse getVideosInAPlayList(String playlistId, PageableDto pageable){
+        Integer pN = pageable.getPageNumber(), pS = pageable.getPageSize();
+        Sort sort = null;
+        if(pageable.getSortDir().equalsIgnoreCase("asc")) {
+            sort = Sort.by(pageable.getSortBy()).ascending();
+        }
+        else {
+            sort = Sort.by(pageable.getSortBy()).descending();
+        }
+        System.out.println("\n\n\n"+ playlistId+"\n\n\n");
+        Pageable p = PageRequest.of(pN, pS, sort);
+        PlayList playList = this.pLayListRepo.findById(playlistId).orElseThrow(()-> new RuntimeException("\n\nPlaylist not found\n\n"));
+        PlayList playList1 = pLayListRepo.findPlayListById(playlistId);
+        System.out.println("\n\n\nYaha Tak Nhi Pahucha\n\n\n");
+        System.out.println(playList1 + "KJDSKLJKLJFDLKJLSFKJ");
+        Page<Video> pageVideos = new PageImpl<>(playList.getPlaylistItems(), p, pageable.getPageSize());
+        List<Video> getVideos = pageVideos.getContent();
+        return new PageResponse(new ArrayList<>(getVideos), pageVideos.getNumber(), pageVideos.getSize(), pageVideos.getTotalPages(), playList.getPlaylistItems().size(), pageVideos.isLast());
+    }
+
+    public void getTheVideo() {
+        String playlistId = "PL7VfLVol-8koiCApWIG0l8M92xSJVEr1c";
+        PlayList playList = this.pLayListRepo.findById(playlistId).orElseThrow(()->new RuntimeException("No playlist found by the entered playlistId"));
+        System.out.println("\n\n\n"+playList.toString()+ "\n\n\n");
     }
 }
