@@ -20,7 +20,7 @@ public class PlayList {
     private String description;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Thumbnails thumbnails = new Thumbnails();
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "playLists")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "playLists")
     private List<Video> playlistItems = new ArrayList<>();
     public PlayList(String id, String etag, Date publishedAt, String title, String description, Thumbnails thumbnails) {
         this.id = id;

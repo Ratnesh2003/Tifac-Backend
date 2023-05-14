@@ -1,10 +1,7 @@
 package com.example.tifac_backend.Models;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -12,8 +9,10 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class Video {
-    @EmbeddedId
-    private VideoId videoId;
+    private String etag;
+    @Id
+    private String id;
+    private String videoId;
     private Date publishedAt;
     private String title;
     @Column(length = 10000)
@@ -21,9 +20,11 @@ public class Video {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Thumbnails thumbnails = new Thumbnails();
     @ManyToMany
-    private Collection<PlayList> playLists;
+    private Collection<PlayList> playLists = new ArrayList<>();
 
-    public Video(VideoId videoId, Date publishedAt, String title, String description, Thumbnails thumbnails) {
+    public Video(String etag, String id, String videoId, Date publishedAt, String title, String description, Thumbnails thumbnails) {
+        this.etag = etag;
+        this.id = id;
         this.videoId = videoId;
         this.publishedAt = publishedAt;
         this.title = title;

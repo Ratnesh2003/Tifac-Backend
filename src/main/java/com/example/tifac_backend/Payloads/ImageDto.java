@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageDto {
+    private String id;
     private String url;
     private Integer width;
     private Integer height;

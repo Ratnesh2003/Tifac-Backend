@@ -14,22 +14,16 @@ public class Thumbnails {
     private String videoId;
     @JsonProperty("default")
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Image Default = new Image();
+    private Image Default;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Image medium = new Image();
+    private Image medium;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Image high = new Image();
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Image standard = new Image();
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Image maxres = new Image();
+    private Image high;
 
-    public Thumbnails(String videoId, Image aDefault, Image medium, Image high, Image standard, Image maxres) {
+    public Thumbnails(String videoId, Image aDefault, Image medium, Image high) {
         this.videoId = videoId;
         this.Default = aDefault;
         this.medium = medium;
         this.high = high;
-        this.standard = standard;
-        this.maxres = maxres;
     }
 }
