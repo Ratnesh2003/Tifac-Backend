@@ -19,4 +19,7 @@ public interface FeignClient {
 
     @GetMapping("/channels/")
     ResponseEntity<?> getChannelDetails(@RequestParam String key, @RequestParam String part, @RequestParam String id);
+
+    @GetMapping("/videos")
+    ResponseEntity<?> getTheChannelDetails(@RequestParam String key, @RequestParam String part, @RequestParam String id);
 }
