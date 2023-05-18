@@ -13,9 +13,11 @@ import com.example.tifac_backend.Repository.VideoRepository;
 import com.example.tifac_backend.service.FeignClient;
 import com.example.tifac_backend.service.VideoService;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -235,6 +237,16 @@ public class VideoServiceImpl implements VideoService {
         return this.feignClient.getChannelDetails(key, "snippet,contentDetails,statistics", channelId);
     }
 
+    @Override
+    public ResponseEntity<?> addNewVideo(JSONObject notificationObject) {
+        String videoIdProp = notificationObject.getJSONObject("feed").getJSONObject("entry").getString("id");
+        String[] idParts = videoIdProp.split(":");
+        String videoId = idParts[2];
+
+
+        return ResponseEntity.status(HttpStatus.OK).body("DONE");
+    }
+
     private Pageable createPaginationRequest(PageableDto pageable) {
         Integer pN = pageable.getPageNumber(), pS = pageable.getPageSize();
         Sort sort;
@@ -246,4 +258,6 @@ public class VideoServiceImpl implements VideoService {
         }
         return PageRequest.of(pN, pS, sort);
     }
+
+
 }

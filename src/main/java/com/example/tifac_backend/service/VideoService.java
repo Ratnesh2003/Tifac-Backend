@@ -2,6 +2,7 @@ package com.example.tifac_backend.service;
 
 import com.example.tifac_backend.Payloads.PageResult.PageResponse;
 import com.example.tifac_backend.Payloads.PageResult.PageableDto;
+import org.json.JSONObject;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -25,4 +26,6 @@ public interface VideoService {
     ResponseEntity<?> getVideoById(String videoId);
 
     ResponseEntity<?> getChannelInfo();
+
+    ResponseEntity<?> addNewVideo(JSONObject notificationObject);
 }

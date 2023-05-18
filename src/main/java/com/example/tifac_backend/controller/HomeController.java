@@ -2,15 +2,10 @@ package com.example.tifac_backend.controller;
 
 import com.example.tifac_backend.Payloads.PageResult.PageableDto;
 import com.example.tifac_backend.service.VideoService;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -102,10 +97,8 @@ public class HomeController {
     }
 
     @PostMapping("/pubsubhubbub")
-    public ResponseEntity<String> notification(@RequestBody String notification) {
+    public ResponseEntity<?> notification(@RequestBody String notification) {
         JSONObject jsonObject = XML.toJSONObject(notification);
-        String jsonString = jsonObject.toString();
-        System.out.println(jsonString);
-        return ResponseEntity.status(OK).body(notification);
+        return videoService.addNewVideo(jsonObject);
     }
 }
