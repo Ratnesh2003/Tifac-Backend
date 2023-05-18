@@ -7,9 +7,9 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 public interface VideoService {
-    ResponseEntity<?> webScrapVideos();
+    void webScrapPlayListContent();
 
-    ResponseEntity<?> webScrapPlayListContent();
+    void updateVideo(String jsonString);
 
     PageResponse searchVideos(String value, PageableDto pageable);
 

@@ -17,9 +17,8 @@ import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,7 +44,6 @@ public class VideoServiceImpl implements VideoService {
     public String part = "snippet%2CcontentDetails";
 
     //---------------------------------------------------- Database Service ---------------------------------------------------
-    @Override
     public ResponseEntity<?> webScrapVideos() {
         AtomicInteger i= new AtomicInteger(0);
         try {
@@ -85,7 +83,8 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public ResponseEntity<?> webScrapPlayListContent() {
+    @Scheduled(cron = "0 0 2 * * ?", zone = "Asia/Kolkata")
+    public void webScrapPlayListContent() {
         webScrapVideos();
         webScrapPlayList();
         List<PlayList> playlists = this.pLayListRepo.findAll();
@@ -118,8 +117,8 @@ public class VideoServiceImpl implements VideoService {
                                 }
                                 if(!youtubeVideo.getSnippet().getTitle().equals("Private video") || youtubeVideo.getContentDetails().getVideoPublishedAt() != null){
                                     if(!videoModel.getPlayLists().contains(youtubePlaylist)) {
-                                    videoModel.getPlayLists().add(youtubePlaylist);
-                                    this.videoRepository.saveAndFlush(videoModel);
+                                        videoModel.getPlayLists().add(youtubePlaylist);
+                                        this.videoRepository.saveAndFlush(videoModel);
                                     }
                                     if(!youtubePlaylist.getPlaylistItems().contains(videoModel)) {
                                         youtubePlaylist.getPlaylistItems().add(videoModel);
@@ -137,10 +136,9 @@ public class VideoServiceImpl implements VideoService {
                 } while (pageToken != null);
             });
         }
-        return new ResponseEntity<>(new Message("The Youtube Response Has Been Fetched and Saved"), OK);
     }
 
-        public void webScrapPlayList() {
+    public void webScrapPlayList() {
         try {
             AtomicInteger i= new AtomicInteger();
             String nextToken = null;
@@ -175,7 +173,54 @@ public class VideoServiceImpl implements VideoService {
             e.printStackTrace();
         }
     }
-// --------------------------------------- Service By SpringBoot -----------------------------------------------------------------------
+
+    @Override
+    public void updateVideo(String jsonString){
+        JSONObject json = new JSONObject(jsonString);
+        boolean isVideoToBeDeleted = json.has("feed") && json.getJSONObject("feed").has("at:deleted-entry");
+        String videoId;
+        if (isVideoToBeDeleted) {
+            videoId = json.getJSONObject("feed").getJSONObject("at:deleted-entry").getString("ref");
+            if(videoId==null){
+                System.out.println("\n\nVideo ID is not able to determined\n");
+                return;
+            }
+            deleteAVideo(videoId);
+            System.out.println("Video 1 deleted: " + videoId);
+        } else {
+            videoId = json.getJSONObject("feed").getString("videoId");
+            if(videoId==null){
+                System.out.println("\n\nVideo ID is not able to determined\n");
+                return;
+            }
+            ResponseEntity<?> response = this.feignClient.getTheChannelDetails(key, part, videoId);
+            YoutubeResponse youtubeResponse = this.modelMapper.map(response.getBody(), YoutubeResponse.class);
+
+            try {
+                if(!youtubeResponse.getItems().isEmpty())
+                    youtubeResponse.getItems().forEach((youtubeVideo) -> {
+                        Thumbnails thumbnails = createThumbnail(youtubeVideo);
+                        if(!youtubeVideo.getSnippet().getTitle().equals("Private video") || youtubeVideo.getContentDetails().getVideoPublishedAt() != null) {
+                            Video videoModel = new Video(youtubeVideo.getEtag(), youtubeVideo.getId(), videoId, youtubeVideo.getSnippet().getPublishedAt(), youtubeVideo.getSnippet().getTitle(), youtubeVideo.getSnippet().getDescription(), thumbnails);
+                            this.videoRepository.save(videoModel);
+                        }
+                    });
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+            System.out.println("Video updated with videoId: " + videoId);
+        }
+    }
+
+    public void deleteAVideo(String videoId){
+        Optional<Video> video = this.videoRepository.findByVideoId(videoId);
+        if(video.isEmpty())
+            return;
+        this.videoRepository.delete(video.get());
+    }
+
+    // --------------------------------------- Service By SpringBoot -----------------------------------------------------------------------
     @Override
     public PageResponse searchVideos(String value, PageableDto pageable){
         Page<Video> pageVideos = this.videoRepository.findByTitleContainingIgnoreCase(value, createPaginationRequest(pageable));
@@ -237,16 +282,6 @@ public class VideoServiceImpl implements VideoService {
         return this.feignClient.getChannelDetails(key, "snippet,contentDetails,statistics", channelId);
     }
 
-    @Override
-    public ResponseEntity<?> addNewVideo(JSONObject notificationObject) {
-        String videoIdProp = notificationObject.getJSONObject("feed").getJSONObject("entry").getString("id");
-        String[] idParts = videoIdProp.split(":");
-        String videoId = idParts[2];
-
-
-        return ResponseEntity.status(HttpStatus.OK).body("DONE");
-    }
-
     private Pageable createPaginationRequest(PageableDto pageable) {
         Integer pN = pageable.getPageNumber(), pS = pageable.getPageSize();
         Sort sort;
@@ -258,6 +293,4 @@ public class VideoServiceImpl implements VideoService {
         }
         return PageRequest.of(pN, pS, sort);
     }
-
-
 }
