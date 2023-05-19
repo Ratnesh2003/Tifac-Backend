@@ -71,6 +71,7 @@ public class VideoServiceImpl implements VideoService {
     }
 
     private Thumbnails createThumbnail(VideoDto youtubeVideo) {
+        System.out.println( "Neeche dekho \n"+ youtubeVideo.getContentDetails() + "\n Upar dekho");
         youtubeVideo.getSnippet().getThumbnails().getDefault().setId(youtubeVideo.getContentDetails().getVideoId().concat("Default"));
         youtubeVideo.getSnippet().getThumbnails().getMedium().setId(youtubeVideo.getContentDetails().getVideoId().concat("Medium"));
         youtubeVideo.getSnippet().getThumbnails().getHigh().setId(youtubeVideo.getContentDetails().getVideoId().concat("High"));
@@ -85,7 +86,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     @Scheduled(cron = "0 0 2 * * ?", zone = "Asia/Kolkata")
     public void webScrapPlayListContent() {
-        webScrapVideos();
+//        webScrapVideos();
         webScrapPlayList();
         List<PlayList> playlists = this.pLayListRepo.findAll();
         if (!playlists.isEmpty()) {
@@ -177,6 +178,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public void updateVideo(String jsonString){
         JSONObject json = new JSONObject(jsonString);
+        System.out.println("Second print: " + json);
         boolean isVideoToBeDeleted = json.has("feed") && json.getJSONObject("feed").has("at:deleted-entry");
         String videoId;
         if (isVideoToBeDeleted) {
@@ -188,7 +190,7 @@ public class VideoServiceImpl implements VideoService {
             deleteAVideo(videoId);
             System.out.println("Video 1 deleted: " + videoId);
         } else {
-            videoId = json.getJSONObject("feed").getString("videoId");
+            videoId = json.getJSONObject("feed").getJSONObject("entry").getString("yt:videoId");
             if(videoId==null){
                 System.out.println("\n\nVideo ID is not able to determined\n");
                 return;
@@ -200,6 +202,8 @@ public class VideoServiceImpl implements VideoService {
                 if(!youtubeResponse.getItems().isEmpty())
                     youtubeResponse.getItems().forEach((youtubeVideo) -> {
                         Thumbnails thumbnails = createThumbnail(youtubeVideo);
+                        System.out.println("Yaha tak chal gya: \n" + thumbnails);
+
                         if(!youtubeVideo.getSnippet().getTitle().equals("Private video") || youtubeVideo.getContentDetails().getVideoPublishedAt() != null) {
                             Video videoModel = new Video(youtubeVideo.getEtag(), youtubeVideo.getId(), videoId, youtubeVideo.getSnippet().getPublishedAt(), youtubeVideo.getSnippet().getTitle(), youtubeVideo.getSnippet().getDescription(), thumbnails);
                             this.videoRepository.save(videoModel);
@@ -281,6 +285,7 @@ public class VideoServiceImpl implements VideoService {
     public ResponseEntity<?> getChannelInfo(){
         return this.feignClient.getChannelDetails(key, "snippet,contentDetails,statistics", channelId);
     }
+
 
     private Pageable createPaginationRequest(PageableDto pageable) {
         Integer pN = pageable.getPageNumber(), pS = pageable.getPageSize();

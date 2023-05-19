@@ -26,6 +26,4 @@ public interface VideoService {
     ResponseEntity<?> getVideoById(String videoId);
 
     ResponseEntity<?> getChannelInfo();
-
-    ResponseEntity<?> addNewVideo(JSONObject notificationObject);
 }
