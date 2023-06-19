@@ -8,6 +8,7 @@ WORKDIR /app
 
 COPY . .
 
+# To allow the file to alter with tehe file we need to give the execution access to the mvn below such that it can run inside the container
 RUN ./mvnw package
 
 FROM openjdk:17-jdk-slim
