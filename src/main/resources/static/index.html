@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pranav Bisaria's Server</title>
+    <link rel="icon" type="image/x-icon" href="https://yt3.googleusercontent.com/ytc/AGIKgqNzCtfO0NC8XzJfA9NK9woM2JvzE-HcjBI5GrwA8A=s176-c-k-c0x00ffffff-no-rj">
+    <meta name="author" content="Pranav Bisaria">
+    <style>
+        html{
+            scroll-behavior: smooth;
+        }
+        #mainContainer{
+            margin: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        #profileImage{
+            border: 2px solid black;
+            border-radius: 150px;
+            margin: 20px auto;
+            height:300px;
+            width: 300px;
+        }
+        #social{
+            margin: 70px auto 20px;
+            font-size: 20px;
+        }
+        #resume{
+            font-size: 30px;
+        }
+        @media screen and (max-width: 1000px){
+            html{
+                font-size: 2em;
+            }
+            #profileImage{
+                border: 2px solid black;
+                border-radius: 45vw;
+                margin: 20px auto;
+                height:auto;
+                width: 90vw;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id ="mainContainer">This is the backend server of
+    <img id="profileImage" src="https://yt3.googleusercontent.com/ytc/AGIKgqNzCtfO0NC8XzJfA9NK9woM2JvzE-HcjBI5GrwA8A=s176-c-k-c0x00ffffff-no-rj" alt="APPLICATION LOGO">
+    <h1>Designed and Developed by <b>Pranav Bisaria</b> and  <b>Ratnesh Mishra</b></h1>
+    <a target="_blank" rel="noopener" href = "/swagger-ui/index.html">API Documentation (Swagger)</a>
+    <a target="_blank" rel="noopener" href = "https://github.com/Ratnesh2003/Tifac-Backend">Github Repo (Source Code)</a>
+</div>
+</body>
+</html>
